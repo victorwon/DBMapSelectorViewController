@@ -13,7 +13,6 @@
 #import "DBMapSelectorOverlayRenderer.h"
 #import "DBMapSelectorManager.h"
 
-
 NSInteger const defaultRadius       = 1000;
 NSInteger const defaultMinDistance  = 100;
 NSInteger const defaultMaxDistance  = 10000;
@@ -42,6 +41,7 @@ NSInteger const defaultMaxDistance  = 10000;
     if (self) {
         _isFirstTimeApplySelectorSettings = YES;
         _mapView = mapView;
+        _pinColor = MKPinAnnotationColorGreen;
         [self prepareForFirstUse];
     }
     return self;
@@ -51,14 +51,14 @@ NSInteger const defaultMaxDistance  = 10000;
     [self selectorSetDefaults];
     
     _selectorOverlay = [[DBMapSelectorOverlay alloc] initWithCenterCoordinate:_circleCoordinate radius:_circleRadius];
-
+    
 #ifdef DEBUG
     _radiusTouchView = [[UIView alloc] initWithFrame:CGRectZero];
     _radiusTouchView.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:.5f];
     _radiusTouchView.userInteractionEnabled = NO;
-//    [self.mapView addSubview:_radiusTouchView];
+    //[self.mapView addSubview:_radiusTouchView];
 #endif
-
+    
     _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognizer:)];
     
     _mapViewGestureEnabled = YES;
@@ -102,7 +102,7 @@ NSInteger const defaultMaxDistance  = 10000;
     selectorGestureRecognizer.touchesBeganCallback = ^(NSSet * touches, UIEvent * event) {
         UITouch *touch = [touches anyObject];
         CGPoint touchPoint = [touch locationInView:weakSelf.mapView];
-//        NSLog(@"---- %@", CGRectContainsPoint(_selectorRadiusRect, p) ? @"Y" : @"N");
+        //NSLog(@"---- %@", CGRectContainsPoint(_selectorRadiusRect, p) ? @"Y" : @"N");
         
         CLLocationCoordinate2D coord = [weakSelf.mapView convertPoint:touchPoint toCoordinateFromView:weakSelf.mapView];
         MKMapPoint mapPoint = MKMapPointForCoordinate(coord);
@@ -140,12 +140,12 @@ NSInteger const defaultMaxDistance  = 10000;
     selectorGestureRecognizer.touchesEndedCallback = ^(NSSet * touches, UIEvent * event) {
         weakSelf.mapView.scrollEnabled = YES;
         weakSelf.mapView.userInteractionEnabled = YES;
-
+        
         if (_prevRadius != weakSelf.circleRadius) {
             [weakSelf recalculateRadiusTouchRect];
-//            if (((_prevRadius / weakSelf.circleRadius) >= 1.25f) || ((_prevRadius / weakSelf.circleRadius) <= .75f)) {
-                [weakSelf updateMapRegionForMapSelector];
-//            }
+            //if (((_prevRadius / weakSelf.circleRadius) >= 1.25f) || ((_prevRadius / weakSelf.circleRadius) <= .75f)) {
+            [weakSelf updateMapRegionForMapSelector];
+            //}
         }
         if(!_mapViewGestureEnabled) {
             if (_delegate && [_delegate respondsToSelector:@selector(mapSelectorManagerDidHandleUserInteraction:)]) {
@@ -319,7 +319,7 @@ NSInteger const defaultMaxDistance  = 10000;
     }
     
     if (_hidden == NO && ((_editingType == DBMapSelectorEditingTypeFull) || (_editingType == DBMapSelectorEditingTypeCoordinateOnly))) {
-        DBMapSelectorAnnotation *selectorAnnotation = [[DBMapSelectorAnnotation alloc] init];
+        DBMapSelectorAnnotation *selectorAnnotation = [[DBMapSelectorAnnotation alloc] initWithTitle:_title andSubTitle:_subtitle];
         selectorAnnotation.coordinate = _circleCoordinate;
         [self.mapView addAnnotation:selectorAnnotation];
     }
@@ -334,10 +334,19 @@ NSInteger const defaultMaxDistance  = 10000;
         if (selectorAnnotationView) {
             selectorAnnotationView.annotation = annotation;
         } else {
+            
             selectorAnnotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:selectorIdentifier];
-            selectorAnnotationView.pinColor = MKPinAnnotationColorGreen;
-            selectorAnnotationView.draggable = YES;
         }
+        selectorAnnotationView.pinColor = _pinColor;
+        selectorAnnotationView.draggable = YES;
+        if ([self.dataSource respondsToSelector:@selector(mapSelectorManagerLeftCalloutAccessoryView)]) {
+            selectorAnnotationView.leftCalloutAccessoryView = [self.dataSource mapSelectorManagerLeftCalloutAccessoryView];
+        }
+        if ([self.dataSource respondsToSelector:@selector(mapSelectorManagerRightCalloutAccessoryView)]) {
+            selectorAnnotationView.rightCalloutAccessoryView = [self.dataSource mapSelectorManagerRightCalloutAccessoryView];
+        }
+        
+        selectorAnnotationView.canShowCallout = ([annotation title] != nil && [annotation title].length>0);
         selectorAnnotationView.selected = YES;
         return selectorAnnotationView;
     } else {

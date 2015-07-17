@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "DBMapSelectorManager.h"
 
-@interface ViewController () <UIPickerViewDataSource, UIPickerViewDelegate, DBMapSelectorManagerDelegate> {
+@interface ViewController () <UIPickerViewDataSource, UIPickerViewDelegate, DBMapSelectorManagerDelegate, DBMapSelectorManagerDataSource> {
     NSDictionary        *_fillColorDict;
     NSDictionary        *_strokeColorDict;
     UIPickerView        *_fillColorPickerView;
@@ -26,6 +26,7 @@
     if (nil == _mapSelectorManager) {
         _mapSelectorManager = [[DBMapSelectorManager alloc] initWithMapView:self.mapView];
         _mapSelectorManager.delegate = self;
+        _mapSelectorManager.dataSource = self;
     }
     return _mapSelectorManager;
 }
@@ -39,9 +40,6 @@
 
     // Set map selector settings
     self.mapSelectorManager.circleCoordinate = CLLocationCoordinate2DMake(55.75399400, 37.62209300);
-    self.mapSelectorManager.circleRadius = 3000;
-    self.mapSelectorManager.circleRadiusMax = 25000;
-    [self.mapSelectorManager applySelectorSettings];
     
     _fillColorDict = @{@"Orange": [UIColor orangeColor], @"Green": [UIColor greenColor],  @"Pure": [UIColor purpleColor],  @"Cyan": [UIColor cyanColor], @"Yellow": [UIColor yellowColor],  @"Magenta": [UIColor magentaColor]};
     _strokeColorDict = @{@"Dark Gray": [UIColor darkGrayColor], @"Black": [UIColor blackColor], @"Brown": [UIColor brownColor], @"Red": [UIColor redColor], @"Blue": [UIColor blueColor]};
@@ -99,11 +97,24 @@
 
 - (void)mapSelectorManager:(DBMapSelectorManager *)mapSelectorManager didChangeCoordinate:(CLLocationCoordinate2D)coordinate {
     _coordinateLabel.text = [NSString stringWithFormat:@"Coordinate = {%.5f, %.5f}", coordinate.latitude, coordinate.longitude];
+    self.mapSelectorManager.title = _coordinateLabel.text;
+    [self.mapSelectorManager applySelectorSettings];
 }
 
 - (void)mapSelectorManager:(DBMapSelectorManager *)mapSelectorManager didChangeRadius:(CLLocationDistance)radius {
     NSString *radiusStr = (radius >= 1000) ? [NSString stringWithFormat:@"%.1f km", radius * .001f] : [NSString stringWithFormat:@"%.0f m", radius];
     _radiusLabel.text = [@"Radius = " stringByAppendingString:radiusStr];
+    self.mapSelectorManager.subtitle = _radiusLabel.text;
+    [self.mapSelectorManager applySelectorSettings];
+}
+
+#pragma mark - DBMapSelectorManager DataSource
+
+- (UIView *)mapSelectorManagerRightCalloutAccessoryView {
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    [button setTitle:@"Button" forState:UIControlStateNormal];
+    [button setFrame:CGRectMake(0, 0, 62, 31)];
+    return button;
 }
 
 #pragma mark - UIPickerView Delegate && DataSource

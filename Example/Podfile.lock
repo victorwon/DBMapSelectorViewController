@@ -1,0 +1,14 @@
+PODS:
+  - DBMapSelectorViewController (1.2.1)
+
+DEPENDENCIES:
+  - DBMapSelectorViewController (from `../`)
+
+EXTERNAL SOURCES:
+  DBMapSelectorViewController:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DBMapSelectorViewController: b4b38dcd1ed10eba7b8b7a94d4376dd35bdbfce6
+
+COCOAPODS: 0.37.2

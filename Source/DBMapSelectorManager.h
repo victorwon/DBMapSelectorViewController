@@ -28,10 +28,20 @@ typedef NS_ENUM(NSInteger, DBMapSelectorEditingType) {
 
 @end
 
+@protocol DBMapSelectorManagerDataSource <NSObject>
+
+@optional
+- (UIView *)mapSelectorManagerLeftCalloutAccessoryView;
+- (UIView *)mapSelectorManagerRightCalloutAccessoryView;
+
+@end
+
+
 @class DBMapSelectorOverlay;
 @interface DBMapSelectorManager : NSObject
 
 @property (nonatomic, weak) id<DBMapSelectorManagerDelegate> delegate;
+@property (nonatomic, weak) id<DBMapSelectorManagerDataSource> dataSource;
 @property (nonatomic, strong, readonly) MKMapView       *mapView;
 
 /*!
@@ -56,6 +66,18 @@ typedef NS_ENUM(NSInteger, DBMapSelectorEditingType) {
 /*! @brief Used to specify the maximum selector radius */
 @property (nonatomic, assign) CLLocationDistance        circleRadiusMax;        // default is equal 10000 meter
 
+/*!
+ @brief Used to show a callout
+ @discussion title shown in the callout
+ */
+@property (nonatomic, strong) NSString                   *title;
+
+/*!
+ @brief Used to show a callout
+ @discussion subtitle shown in the callout
+ */
+@property (nonatomic, strong) NSString                   *subtitle;
+
 /*! @brief Used to hide or show selector */
 @property (nonatomic, getter=isHidden) BOOL             hidden;                 // default is NO
 
@@ -73,6 +95,12 @@ typedef NS_ENUM(NSInteger, DBMapSelectorEditingType) {
  @discussion Color is used to delimit the circular map region
  */
 @property (nonatomic, strong) UIColor                   *strokeColor;
+
+/*!
+ @brief PinColor
+ @discussion Color of the dropped Pin
+ */
+@property (nonatomic) MKPinAnnotationColor              pinColor;
 
 /*!
  @brief The magnification factor maps region after changing the selector settings

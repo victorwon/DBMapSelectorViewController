@@ -11,4 +11,6 @@
 
 @interface DBMapSelectorAnnotation : NSObject <MKAnnotation>
 
+- (id)initWithTitle:(NSString *)title andSubTitle:(NSString *)subtitle;
+
 @end

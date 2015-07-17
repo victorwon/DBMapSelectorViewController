@@ -11,6 +11,17 @@
 @implementation DBMapSelectorAnnotation
 
 @synthesize coordinate = _coordinate;
+@synthesize title = _title;
+@synthesize subtitle = _subtitle;
+
+- (id)initWithTitle:(NSString *)title andSubTitle:(NSString *)subtitle {
+    self = [self init];
+    if (self) {
+        _title = title;
+        _subtitle = subtitle;
+    }
+    return self;
+}
 
 - (void)setCoordinate:(CLLocationCoordinate2D)coordinate {
     _coordinate = coordinate;

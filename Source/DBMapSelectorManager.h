@@ -66,6 +66,12 @@ typedef NS_ENUM(NSInteger, DBMapSelectorEditingType) {
 /*! @brief Used to specify the maximum selector radius */
 @property (nonatomic, assign) CLLocationDistance        circleRadiusMax;        // default is equal 10000 meter
 
+/*! 
+ @brief Used to specify outer Radis for fill outside
+ @discussion Total outer radius will be circleRadius plus this
+ */
+@property (nonatomic, assign) CLLocationDistance        circleRadiusFillOutside;
+
 /*!
  @brief Used to show a callout
  @discussion title shown in the callout

@@ -211,6 +211,11 @@ NSInteger const defaultMaxDistance  = 10000;
     }
 }
 
+- (void)setCircleRadiusFillOutside:(CLLocationDistance)circleRadiusFillOutside {
+        _circleRadiusFillOutside = circleRadiusFillOutside;
+        _selectorOverlay.radiusFillOutside = _circleRadiusFillOutside;
+}
+
 - (void)setCircleCoordinate:(CLLocationCoordinate2D)circleCoordinate {
     if ((_circleCoordinate.latitude != circleCoordinate.latitude) || (_circleCoordinate.longitude != circleCoordinate.longitude)) {
         _circleCoordinate = circleCoordinate;

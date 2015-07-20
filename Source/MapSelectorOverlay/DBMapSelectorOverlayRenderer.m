@@ -83,14 +83,18 @@
     CGContextSetShouldAntialias(context, YES);
     
     if (NO == _selectorOverlay.fillInside) {
-        
-        CGRect rect = [self rectForMapRect:mapRect];
-        CGContextSaveGState(context);
-        CGContextAddRect(context, rect);
-        CGContextSetFillColorWithColor(context, [self.fillColor colorWithAlphaComponent:.2f].CGColor);
-        CGContextFillRect(context, rect);
-        CGContextRestoreGState(context);
-        
+        if (_selectorOverlay.radiusFillOutside) {
+            CGContextSetFillColorWithColor(context, [self.fillColor colorWithAlphaComponent:.2f].CGColor);
+            CGContextAddArc(context, overlayRect.origin.x, overlayRect.origin.y, radiusAtLatitude + (_selectorOverlay.radiusFillOutside * MKMapPointsPerMeterAtLatitude([[self overlay] coordinate].latitude)), 0, 2 * M_PI, true);
+            CGContextDrawPath(context, kCGPathFillStroke);
+        } else {
+            CGRect rect = [self rectForMapRect:mapRect];
+            CGContextSaveGState(context);
+            CGContextAddRect(context, rect);
+            CGContextSetFillColorWithColor(context, [self.fillColor colorWithAlphaComponent:.2f].CGColor);
+            CGContextFillRect(context, rect);
+            CGContextRestoreGState(context);
+        }
         CGContextSaveGState(context);
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextSetBlendMode(context, kCGBlendModeClear);

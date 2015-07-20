@@ -13,6 +13,7 @@
 
 @property (nonatomic, assign) CLLocationCoordinate2D            coordinate;
 @property (nonatomic, assign) CLLocationDistance                radius;
+@property (nonatomic, assign) CLLocationDistance                radiusFillOutside;
 @property (nonatomic, assign) BOOL                              editingCoordinate;
 @property (nonatomic, assign) BOOL                              editingRadius;
 @property (nonatomic, assign) BOOL                              fillInside;

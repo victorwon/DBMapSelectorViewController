@@ -114,6 +114,12 @@ typedef NS_ENUM(NSInteger, DBMapSelectorEditingType) {
  */
 @property (nonatomic, assign) CGFloat                   mapRegionCoef;          // default is equal 2.f
 
+/*!
+ @brief Keep the map coordinates and zoom unchanged unless the selected is not visible map.
+ @discussion It is useful when requiring a stable map during user operations
+ */
+@property (nonatomic) BOOL                              keepMapRegionIntactUnlessInvisible; // default is NO
+
 /*! @brief Indicates whether the radius text should be displayed or not */
 @property (nonatomic) BOOL                              shouldShowRadiusText;
 

@@ -310,11 +310,7 @@ NSInteger const defaultMaxDistance  = 10000;
 
 - (void)updateMapRegionForMapSelector {
     MKCoordinateRegion selectorRegion = MKCoordinateRegionForMapRect(_selectorOverlay.boundingMapRect);
-    if (_mapRegionCoef <= 0) { // when <=0 keep map zoom unchanged and move map only if not visible. 
-        if(!MKMapRectContainsPoint(self.mapView.visibleMapRect, MKMapPointForCoordinate(selectorRegion.center)))
-            self.mapView.centerCoordinate = selectorRegion.center;
-        return;
-    }
+    if (_keepMapRegionIntactUnlessInvisible && MKMapRectContainsPoint(self.mapView.visibleMapRect, MKMapPointForCoordinate(selectorRegion.center))) return;
     MKCoordinateRegion region;
     region.center = selectorRegion.center;
     region.span = MKCoordinateSpanMake(selectorRegion.span.latitudeDelta * _mapRegionCoef, selectorRegion.span.longitudeDelta * _mapRegionCoef);
